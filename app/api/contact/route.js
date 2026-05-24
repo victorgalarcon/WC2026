@@ -7,7 +7,7 @@ export async function POST(req) {
     const { name, email, phone, message } = await req.json();
 
     await resend.emails.send({
-      from: "World Cup VIP <onboarding@resend.dev>", // replace with verified domain
+      from: "World Cup VIP <delivered@resend.dev>", // replace with verified domain
       to: ["victor.g.alarcon@outlook.com"],
       subject: `New VIP Inquiry from ${name}`,
       html: `
