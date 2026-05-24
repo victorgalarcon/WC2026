@@ -35,7 +35,7 @@ export default function WorldCupVIPMicrosite() {
         setStatus(data.error || "Something went wrong ❌");
       }
     } catch (error) {
-      setStatus("Server error. Please try again later ❌");
+      setStatus("Server error. Please try again later ❌ dummie");
     }
   };
 
