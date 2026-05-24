@@ -3,6 +3,41 @@ import { useEffect, useState } from "react";
 export default function WorldCupVIPMicrosite() {
   const matchDate = new Date("2026-06-13T15:00:00").getTime();
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+  const [status, setStatus] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("Sending...");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus("Inquiry sent successfully ✅");
+        setFormData({ name: "", email: "", phone: "", message: "" });
+      } else {
+        setStatus(data.error || "Something went wrong ❌");
+      }
+    } catch (error) {
+      setStatus("Server error. Please try again later ❌");
+    }
+  };
 
   useEffect(() => {
     const updateTimer = () => {
@@ -76,28 +111,39 @@ export default function WorldCupVIPMicrosite() {
 
         <div className="rounded-3xl shadow-2xl bg-black/40 border border-white/20 text-white p-8">
           <h3 className="text-3xl font-bold mb-6">Reserve / Inquiry Form</h3>
-          <form className="space-y-4" action="https://formspree.io/f/your-form-id" method="POST">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <input
               type="text"
               name="name"
               placeholder="Your Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
               className="w-full p-3 rounded-xl text-black"
             />
             <input
               type="email"
               name="email"
               placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              required
               className="w-full p-3 rounded-xl text-black"
             />
             <input
               type="text"
               name="phone"
               placeholder="Phone / WhatsApp"
+              value={formData.phone}
+              onChange={handleChange}
               className="w-full p-3 rounded-xl text-black"
             />
             <textarea
               name="message"
               placeholder="Questions or reservation request..."
+              value={formData.message}
+              onChange={handleChange}
+              required
               className="w-full p-3 rounded-xl text-black"
               rows="4"
             />
@@ -107,6 +153,7 @@ export default function WorldCupVIPMicrosite() {
             >
               Submit Inquiry
             </button>
+            {status && <p className="text-sm mt-2 text-center">{status}</p>}
           </form>
         </div>
       </section>
